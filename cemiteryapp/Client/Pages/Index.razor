@@ -1,0 +1,37 @@
+﻿@page "/"
+
+<h1>Cemitério da Junqueira</h1>
+<hr />
+<div style="text-align:center;" class="container">
+    <h2 >Ocupação</h2>
+    <div class="row">
+        <div class="col">
+            Actual
+            <p>25</p>
+        </div>
+        <div class="col">
+            Máximo
+            <p>100</p>
+        </div>
+
+    </div>
+</div>
+
+<div class="progress">
+    <div class="progress-bar bg-danger" role="progressbar" style="width: @pergentage" aria-valuenow="@progress" aria-valuemin="0" aria-valuemax="100"></div>
+</div>
+
+@code{
+    int numActual = 25;
+    int numMax = 100;
+    int progress = 0;
+    string pergentage = "0%";
+
+
+    protected override Task OnInitializedAsync()
+    {
+        progress = (numActual * 100) / numMax;
+        pergentage = progress + "%";
+        return base.OnInitializedAsync();
+    }
+}
