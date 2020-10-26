@@ -1,31 +1,70 @@
-﻿@page "/"
+﻿@page "/admin"
+
 @inject HttpClient Http
 @using Microsoft.AspNetCore.SignalR.Client
 @inject NavigationManager NavigationManager
 
 <h1>Cemitério da Junqueira</h1>
 <hr />
+
+@if (!accesso)
+{
+    
+
 <div style="text-align:center;" class="container">
-    <h2>Ocupação</h2>
     <div class="row">
-        <div class="col">
-            Actual
-            <p>@numActual</p>
-        </div>
-        <div class="col">
-            Máximo
-            <p>@numMax</p>
-        </div>
+        <input type="text" class="form-control" placeholder="Passworde de acesso" 
+               aria-label="Username" aria-describedby="basic-addon1" @bind="password">
     </div>
-    <div class="progress">
-        <div class="progress-bar bg-@progressBarType" role="progressbar" style="width: @pergentage" aria-valuenow="@progress" aria-valuemin="0" aria-valuemax="100"></div>
+    <div class="row">
+        <button type="button" class="btn btn-primary" @onclick="VefificarPassword">Add</button>
     </div>
 </div>
+}
+else
+{
+    <div style="text-align:center;" class="container">
+        <h2>Ocupação</h2>
+        <div class="row">
+            <div class="col">
+                Actual
+                <p>@numActual</p>
+            </div>
+            <div class="col">
+                Máximo
+                <p>@numMax</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="progress">
+                    <div class="progress-bar bg-@progressBarType" role="progressbar" style="width: @pergentage" aria-valuenow="@progress" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-top:30px;">
+            <div class="col">
+                <button type="button" class="btn btn-primary" @onclick="AdicionarPessoa">Add</button>
+            </div>
+            <div class="col">
+                <button type="button" class="btn btn-primary" @onclick="RemoverPessoa">Remove</button>
+            </div>
+        </div>
+        
+    </div>
+
+
+    
+    
+    <hr />
+    <p>Ultima actualização: @ultActualizacao</p>
+}
 
 
 
-<hr />
-<p>Ultima actualização: @ultActualizacao</p>
+
+
+
 
 
 
@@ -40,6 +79,8 @@
     string ultActualizacao = DateTime.Now.ToString();
     string progressBarType = "success";
     private static HubConnection hubConnection;
+    public bool accesso = false;
+    public string password;
 
     protected override async Task OnInitializedAsync()
     {
@@ -67,6 +108,11 @@
         await hubConnection.StartAsync();
     }
 
+    Task AdicionarPessoa() =>
+        hubConnection.SendAsync("AdicionarPessoa");
+
+    Task RemoverPessoa() =>
+        hubConnection.SendAsync("RemoverPessoa");
 
 
     public void ActualizarPagina()
@@ -90,5 +136,13 @@
         }
         ultActualizacao = DateTime.Now.ToString();
         StateHasChanged();
+    }
+
+    public void VefificarPassword()
+    {
+        if (password=="1234")
+        {
+            accesso = true;
+        }
     }
 }
